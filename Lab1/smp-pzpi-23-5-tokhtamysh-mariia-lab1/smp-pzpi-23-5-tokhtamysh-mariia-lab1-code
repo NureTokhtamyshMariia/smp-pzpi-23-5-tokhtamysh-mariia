@@ -1,1 +1,133 @@
+#!/bin/bash
+
+if [[ -n "$1" && -n "$2" ]]; then
+    selected_group="$1"
+    selected_file="$2"
+
+    if [[ ! -f "$selected_file" ]]; then
+        echo "Error: File '$selected_file' not found!"
+        exit 1
+    fi
+else
+    if [ -z "$1" ] || [[ "$1" =~ - ]]; then
+        files=( $(ls "$HOME"/TimeTable_??_??_20??.csv 2>/dev/null) )
+        if [[ ${#files[@]} -eq 0 ]]; then
+            echo "Files not found."
+            exit 1
+        fi
+        echo "Select a file (or type 'Quit' to exit):"
+        select file in "${files[@]}" "Quit"; do
+            if [[ "$file" == "Quit" ]]; then
+                echo "Exiting..."
+                exit 0
+            elif [[ -n "$file" ]]; then
+                selected_file="$file"
+                break
+            else
+                echo "Invalid choice, please try again."
+            fi
+        done
+    else
+        selected_file="$1"
+        shift
+    fi
+fi
+
+if [[ ! "$selected_file" =~ ^/ ]]; then
+    selected_file="$HOME/$selected_file"
+fi
+
+if [[ ! -f "$selected_file" ]]; then
+    echo "Error: File '$selected_file' not found!"
+    exit 1
+fi
+
+tmp_path="/tmp/$(basename "$selected_file")"
+iconv -f WINDOWS-1251 -t UTF-8 "$selected_file" | tr '\r' '\n' > "$tmp_path"
+
+INPUT_FILE="$tmp_path"
+groups=$(grep -o '"[^"]*DL [А-Яа-я0-9,-]\+[^\"]*"' "$INPUT_FILE" | sed -E 's/.*DL ([А-Яа-я0-9,-]+).*$/\1/g' | grep -v ',' | sort | uniq)
+
+echo "Found groups in the file:"
+echo "$groups"
+
+if [[ -z "$groups" ]]; then
+    echo "No groups found in the file."
+    exit 1
+fi
+
+if [ -z "$1" ]; then
+    echo "Select a group (or type 'Quit' to exit):"
+    select selected_group in $groups "Quit"; do
+        if [[ "$selected_group" == "Quit" ]]; then
+            echo "Exiting..."
+            exit 0
+        elif [[ -n "$selected_group" ]]; then
+            break
+        else
+            echo "Invalid choice, please try again."
+        fi
+    done
+else
+    selected_group=$1
+    if ! grep -q "$selected_group" <<< "$groups"; then
+        echo "Error: Group '$selected_group' not found in the file!"
+        exit 1
+    fi
+fi
+
+OUTPUT_FILE="$HOME/Google_$(basename "$selected_file")"
+echo "group: $selected_group"
+echo "Input file: $INPUT_FILE"
+echo "Output file: $OUTPUT_FILE"
+
+echo "\"Subject\",\"Start Date\",\"Start Time\",\"End Date\",\"End Time\",\"Description\"" > "$OUTPUT_FILE"
+
+declare -A subject_count
+
+awk -v group="$selected_group" 'BEGIN {
+    FPAT = "([^,]+)|(\"[^\"]+\")"
+    OFS = ","
+}
+
+NR > 1 {
+    for(i = 1; i <= NF; i++) {
+        sub(/^\"/, "", $i)
+        sub(/\"$/, "", $i)
+    }
+    if ($1 ~ "^" group " -") {
+        subject=$12
+        subject_count[subject]++
+
+        numbered_subject = subject "; №" subject_count[subject]
+
+        start_date = $2
+        end_date = $4
+        start_time = $3
+        end_time = $5
+        split(start_date, start_arr, ".")
+        start_date = start_arr[2] "/" start_arr[1] "/" start_arr[3]
+        split(end_date, end_arr, ".")
+        end_date = end_arr[2] "/" end_arr[1] "/" end_arr[3]
+
+        split(start_time, start_time_arr, ":")
+        start_hour = start_time_arr[1]
+        start_minute = start_time_arr[2]
+        start_ampm = (start_hour >= 12 && start_hour < 24) ? "PM" : "AM"
+        if (start_hour > 12) { start_hour -= 12 }
+        if (start_hour == 0) { start_hour = 12 }
+        start_time = start_hour ":" start_minute " " start_ampm
+
+        split(end_time, end_time_arr, ":")
+        end_hour = end_time_arr[1]
+        end_minute = end_time_arr[2]
+        end_ampm = (end_hour >= 12 && end_hour < 24) ? "PM" : "AM"
+        if (end_hour > 12) { end_hour -= 12 }
+        if (end_hour == 0) { end_hour = 12 }
+        end_time = end_hour ":" end_minute " " end_ampm
+
+        print "\"" numbered_subject "\"","\"" start_date "\"","\"" start_time "\"","\"" end_date "\"","\"" end_time "\"","\"" group "\""
+    }
+}' "$INPUT_FILE" >> "$OUTPUT_FILE"
+echo "File $OUTPUT_FILE created!"
 
