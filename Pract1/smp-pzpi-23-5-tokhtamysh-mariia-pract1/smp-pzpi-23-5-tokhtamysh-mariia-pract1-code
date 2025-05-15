@@ -1,1 +1,80 @@
+#!/bin/bash
+
+if (( $# != 2 )); then
+    echo "Error: Expected exactly 2 arguments: height and snow_width." >&2
+    exit 1
+fi
+
+if (( $1 < 8 )); then
+    echo "Error: Tree height must be at least 8." >&2
+    exit 2
+fi
+
+valid_height=$(( $1 / 2 * 2 ))
+min_snow=$(( valid_height - 1 ))
+max_snow=$(( valid_height ))
+
+if (( $2 < min_snow || $2 > max_snow )); then
+    echo "Error: Snow width must be either $min_snow or $max_snow for the given height $1." >&2
+    exit 3
+fi
+
+TREE_HEIGHT=$(( $1 / 2 * 2 ))
+SNOW_WIDTH=$(( TREE_HEIGHT - 1 ))
+
+print_row() {
+    local width=$1
+    local symbol=$2
+    local padding=$(( ((SNOW_WIDTH - 2 - width) / 2) + 1 ))
+    printf "%${padding}s" ""
+    printf "%${width}s\n" | tr ' ' "$symbol"
+}
+
+
+
+build_layer() {
+    height=$(( (TREE_HEIGHT - 2) / 2 ))
+    row=1
+    sym="*"
+
+    while (( row <= height )); do
+        width=$(( row * 2 - 1 ))
+        print_row "$width" "$sym"
+        if [ "$sym" == "*" ]; then
+            sym="#"
+        else
+            sym="*"
+        fi
+        ((row++))
+    done
+
+    row=2
+
+    until (( row > height )); do
+        width=$(( row * 2 - 1 ))
+        print_row "$width" "$sym"
+        if [ "$sym" == "*" ]; then
+            sym="#"
+        else
+            sym="*"
+        fi
+        ((row++))
+    done
+}
+
+build_layer
+
+trunk_height=2
+trunk_width=3
+trunk_padding=$(( (SNOW_WIDTH - trunk_width) / 2 ))
+
+for (( i = 0; i < trunk_height; i++ )); do
+    printf "%${trunk_padding}s" ""
+    printf "%${trunk_width}s\n" | tr ' ' '#'
+done
+
+for (( i = 0; i < SNOW_WIDTH; i++ )); do
+    printf "*"
+done
+printf "\n"
 
