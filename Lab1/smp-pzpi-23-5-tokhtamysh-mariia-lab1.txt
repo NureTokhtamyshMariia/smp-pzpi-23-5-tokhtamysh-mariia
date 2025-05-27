@@ -83,113 +83,116 @@ Google_TimeTable_??_??_20??.csv
  Створюємо новий файл. 
      Відкриваємо термінал Bash і переходимо робочу директорію. У нашому випадку це папка на робочому столі, і ми використовуємо команду cd ~/Desktop/ЛАБ_1_Mariia_Tokhtamysh, щоб потрапити в неї. Сам скрипт має назву pzpi-23-5-tokhtamysh-mariia-task2.sh і служить для обробки CSV-файлів з розкладом занять. У самій папці вже є підготовлені файли із розкладом завантажені з сайту cist.nure.ua
      Функція main є точкою входу у скрипт. Кожна частина виконує окрему логічну задачу, що разом забезпечує коректне опрацювання вхідних параметрів, обробку файлів і генерацію результату. 
-       
-1. script_dir="$(cd "$(dirname "$0")" && pwd)"
+
+109 script_dir="$(cd "$(dirname "$0")" && pwd)"
 
      Цей рядок визначає повний шлях до директорії, де знаходиться сам скрипт. Для цього спочатку визначається директорія файлу скрипта за допомогою dirname "$0", потім виконується перехід у цю директорію (cd), а команда pwd повертає абсолютний шлях. Це потрібно, щоб коректно працювати з файлами у тій же папці незалежно від того, звідки запущено скрипт.
 
-2. if [[ -n "$1" && -n "$2" ]]; then
-3.   selected_group="$1"
-4.   selected_file="$2"
-5.   [[ "$selected_file" != /* ]] && selected_file="$script_dir/$selected_file"
-6. else
-7.   if [ -z "$1" ] || [[ "$1" =~ - ]]; then
-8.     select_timetable_file
-9.   else
-10. selected_file="$1"
-11.     shift
-12.   fi
-13. fi
+111 if [[ -n "$1" && -n "$2" ]]; then
+112  selected_group="$1"
+113  selected_file="$2"
+114  [[ "$selected_file" != /* ]] && selected_file="$script_dir/$selected_file"
+115 else
+116 if [ -z "$1" ] || [[ "$1" =~ - ]]; then
+117  select_timetable_file
+118 else
+119 selected_file="$1"
+120  shift
+121 fi
+122 fi
        
      Цей блок перевіряє, чи передано у виклик скрипта два аргументи. Якщо так, то перший аргумент призначається як вибрана група, другий — як файл розкладу. Якщо шлях до файлу не абсолютний (не починається з /), він доповнюється директорією скрипта.
      Якщо аргументи не передані, або перший аргумент є опцією (починається з -), викликається функція вибору файлу розкладу select_timetable_file. Якщо ж передано тільки один аргумент, він вважається шляхом до файлу, а змінна $1 звільняється для подальшого використання.
        
-14. [[ "$selected_file" != /* ]] && selected_file="$script_dir/$selected_file"
+124 [[ "$selected_file" != /* ]] && selected_file="$script_dir/$selected_file"
      
      Цей рядок повторно перевіряє, чи є шлях до файлу абсолютним. Якщо ні, доповнює шлях директорією скрипта. Це потрібно, щоб бути впевненим у коректності шляху до файлу.
 
-15. if [[ ! -f "$selected_file" ]]; then
-16.   echo "Error: File '$selected_file' not found!"
-17.   exit 1
-18. fi
+126 if [[ ! -f "$selected_file" ]]; then
+127  echo "Error: File '$selected_file' not found!"
+128  exit 1
+129 fi
 
      Перевіряється, чи існує файл за вказаним шляхом. Якщо файлу немає, виводиться повідомлення про помилку і скрипт завершує роботу з кодом помилки
 
-19. source_csv="$selected_file"
-20. converted_file="/tmp/converted_$(basename "$source_csv")"
-21. convert_encoding
+131 source_csv="$selected_file"
+132 converted_file="/tmp/converted_$(basename "$source_csv")"
+133 convert_encoding
 
      Встановлюється змінна source_csv як шлях до вхідного файлу, а converted_file — тимчасовий файл у /tmp для результату конвертації кодування. Викликається функція convert_encoding, яка виконує перетворення кодування з Windows-1251 у UTF-8.
 
-22. convert_encoding() {
-23.   local enc_src="WINDOWS-1251"
-24.   local enc_dst="UTF-8"
-25.   iconv -f "$enc_src" -t "$enc_dst" "$source_csv" > "$converted_file"
-26.   sed -i 's/\r/\n/g' "$converted_file"
-27. }
+3 convert_encoding() {
+4 local enc_src="WINDOWS-1251"
+5 local enc_dst="UTF-8"
+6 iconv -f "$enc_src" -t "$enc_dst" "$source_csv" > "$converted_file"
+7 sed -i 's/\r/\n/g' "$converted_file"
+8 }
+
 
 	Функція convert_encoding відповідає за зміну кодування вхідного CSV-файлу з WINDOWS-1251 на UTF-8. Спочатку визначаються змінні, які містять назви вихідного та цільового кодувань. Далі за допомогою утиліти iconv виконується конвертація файлу з одного кодування в інше, результат записується у тимчасовий файл. Після цього команда sed замінює символи повернення каретки (Windows-стиль кінця рядка) на символи нового рядка, що забезпечує коректне відображення рядків у файлі з новим кодуванням. Такий підхід дозволяє уніфікувати формат тексту та підготувати файл для подальшої обробки.
 
-
-28. INPUT_FILE="$converted_file"
-29. extract_groups || { echo "No valid groups found!"; exit 1; }
+135 INPUT_FILE="$converted_file"
+136 extract_groups || { echo "No valid groups found!"; exit 1; }
 
 	Встановлюється змінна INPUT_FILE як шлях до сконвертованого файлу. Потім виконується функція extract_groups, яка витягує список груп із файлу. Якщо ця функція повертає помилку (наприклад, груп не знайдено), виводиться повідомлення і скрипт завершується.
 
-30. extract_groups() {
-31.   local tmp_file="tmp_groups.csv"
-32.   sed '1d; s/^\"[[:space:]]*\([^ ]*\).*$/\1/' "$INPUT_FILE" > "$tmp_file"
-33.   [[ ! $(head -n 1 "$tmp_file") =~ "-" ]] && return 1
-34.   sort "$tmp_file" | uniq > sorted.csv && mv sorted.csv "$tmp_file"
-35.   mv "$tmp_file" .group_list
-36.   return 0
-37. }
+10 extract_groups() {
+11 local tmp_file="tmp_groups.csv"
+12 sed '1d; s/^\"[[:space:]]*\([^ ]*\).*$/\1/' "$INPUT_FILE" > "$tmp_file"
+13 [[ ! $(head -n 1 "$tmp_file") =~ "-" ]] && return 1
+14 sort "$tmp_file" | uniq > sorted.csv && mv sorted.csv "$tmp_file"
+15 mv "$tmp_file" .group_list
+16 return 0
+17 }
 
 	Функція extract_groups відповідає за вилучення списку груп із вхідного CSV-файлу. Спочатку створюється тимчасовий файл, куди записуються результати обробки основного файлу. Команда sed видаляє перший рядок (зазвичай заголовок) та за допомогою регулярного виразу витягує назви груп із початку рядка, виділяючи перший фрагмент тексту до першого пробілу. 
 	Далі перевіряється, чи перший рядок тимчасового файлу містить символ «-», який вказує на правильний формат назви групи. Якщо ця умова не виконується, функція повертає помилку. Після цього тимчасовий файл сортується і дублікати видаляються за допомогою команд sort та uniq, результат знову записується у тимчасовий файл. Наприкінці тимчасовий файл перейменовується у файл .group_list, що містить унікальний перелік груп для подальшого використання. Функція завершується з кодом успішного виконання.
 
-38. groups=$(cat .group_list)
-39. echo "Found groups in the file:"
-40. echo "$groups"
-41. if [[ -z "$groups" ]]; then
-42.    echo "No groups found in the file."
-43.     exit 1
-44. fi
+138 groups=$(cat .group_list)
+139 echo "Found groups in the file:"
+140 echo "$groups"
+141
+142 if [[ -z "$groups" ]]; then
+143 echo "No groups found in the file."
+144 exit 1
+145 fi
 
 	Зчитується список груп з тимчасового файлу .group_list. Виводиться повідомлення з переліком знайдених груп. Якщо список порожній, виводиться помилка і скрипт завершує роботу.
 
-45. if [[ -z "$selected_group" ]]; then
-46.   select_group
-47. else
-48.   if ! grep -q "$selected_group" <<< "$groups"; then
-49.     echo "Error: Group '$selected_group' not found in the file!"
-50.     exit 1
-51.   fi
-52. Fi
+147 if [[ -z "$selected_group" ]]; then
+148  select_group
+149 else
+150 if ! grep -q "$selected_group" <<< "$groups"; then
+151   echo "Error: Group '$selected_group' not found in the file!"
+152  exit 1
+153  fi
+154 fi
 
 	Якщо група не була передана як аргумент, викликається функція select_group для вибору групи користувачем. Якщо група вже вибрана, перевіряється, чи є вона у списку знайдених груп. Якщо групи немає у списку, виводиться помилка і робота припиняється.
 
-53. select_group() {
-54.   echo "Select a group (or type 'Quit' to exit):"
-55.   select selected_group in $groups "Quit"; do
-56.     if [[ "$selected_group" == "Quit" ]]; then
-57.       echo "Exiting..."
-58.       exit 0
-59.     elif [[ -n "$selected_group" ]]; then
-60.       break
-61.     else
-62.       echo "Invalid choice, please try again."
-63.     fi
-64.   done
-65. }
+39 select_group() {
+40 echo "Select a group (or type 'Quit' to exit):"
+41 select selected_group in $groups "Quit"; do
+42 if [[ "$selected_group" == "Quit" ]]; then
+43    echo "Exiting..."
+44    exit 0
+45  elif [[ -n "$selected_group" ]]; then
+46    break
+47  else
+48    echo "Invalid choice, please try again."
+49  fi
+50 done
+51 }
+
 
 	Функція select_group відповідає за вибір групи користувачем із наявного списку. Вона виводить на екран запрошення обрати групу або вийти з програми, ввівши "Quit". Використовується конструкція select, яка створює меню з доступних груп, а також опції "Quit". Якщо користувач вибирає "Quit", скрипт виводить повідомлення про вихід і завершує роботу з кодом 0. Якщо вибір є дійсним (непорожнім), цикл припиняється і вибрана група зберігається для подальшого використання. У випадку недійсного вибору виводиться повідомлення про помилку, і користувача знову просять зробити вибір. Таким чином функція забезпечує інтуїтивний і безпечний спосіб вибору групи.
 
-66. OUTPUT_FILE="$script_dir/Google_$(basename "$selected_file")"
-67. echo "group: $selected_group"
-68. echo "Input file: $INPUT_FILE"
-69. echo "Output file: $OUTPUT_FILE"
-70. generate_output_csv
+156 OUTPUT_FILE="$script_dir/Google_$(basename "$selected_file")"
+157 echo "group: $selected_group"
+158 echo "Input file: $INPUT_FILE"
+159 echo "Output file: $OUTPUT_FILE"
+160
+161 generate_output_csv
 
 	Формується ім’я вихідного файлу, який буде створено з префіксом Google_ у директорії скрипта. Виводяться параметри вибраної групи, вхідного та вихідного файлів для інформування користувача. Після цього запускається функція generate_output_csv, яка генерує кінцевий CSV-файл для подальшого використання.
 	Функція generate_output_csv відповідає за створення вихідного CSV-файлу з розкладом у потрібному форматі. Спочатку у файл записується заголовок із назвами колонок: предмет, дата початку, час початку, дата кінця, час кінця та опис.
