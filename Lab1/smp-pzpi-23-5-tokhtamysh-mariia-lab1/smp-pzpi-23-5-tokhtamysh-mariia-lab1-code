@@ -116,8 +116,14 @@ main() {
     [[ "$selected_file" != /* ]] && selected_file="$script_dir/$selected_file"
 
   elif [[ -n "$1" ]]; then
-    if is_schedule_file "$1" && [[ -f "$script_dir/$1" ]]; then
+    if is_schedule_file "$1"; then
       selected_file="$script_dir/$1"
+
+      if [[ ! -f "$selected_file" ]]; then
+        echo "Error: File '$selected_file' not found in working directory!"
+        exit 1
+      fi
+
     else
       select_timetable_file
     fi
