@@ -1,6 +1,5 @@
 #!/bin/bash
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-
 convert_encoding() {
   local enc_src="WINDOWS-1251"
   local enc_dst="UTF-8"
