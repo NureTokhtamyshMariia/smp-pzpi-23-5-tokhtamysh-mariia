@@ -1,0 +1,72 @@
+.eco-container {
+  max-width: 800px;
+  margin: 60px auto;
+  padding: 20px 30px;
+  background-color: #f4fdf6;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Source Sans Pro', sans-serif;
+  text-align: center;
+  color: #2e4d34;
+}
+
+.eco-title {
+  font-size: 2.5rem;
+  color: #3a7f5d;
+  margin-bottom: 20px;
+}
+
+.eco-container h2 {
+  margin-top: 30px;
+  font-size: 1.6rem;
+  color: #3a7f5d;
+}
+
+.eco-container p,
+.eco-container ul {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+.eco-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.eco-container ul li {
+  margin: 8px 0;
+  position: relative;
+  padding-left: 20px;
+  text-align: left;
+}
+
+.eco-container ul li::before {
+  content: "•";
+  color: #3a7f5d;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+.home-page__buttons {
+  margin-top: 40px;
+}
+
+.home-page__buttons .btn {
+  padding: 12px 24px;
+  background-color: #3a7f5d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.home-page__buttons .btn:hover {
+  background-color: #2e6246;
+}
+body {
+  background-color: #f0f5e4;
+}
