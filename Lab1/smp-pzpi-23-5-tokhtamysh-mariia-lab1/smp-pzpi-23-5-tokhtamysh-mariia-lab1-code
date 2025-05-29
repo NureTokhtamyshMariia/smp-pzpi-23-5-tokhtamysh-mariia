@@ -23,7 +23,7 @@ select_timetable_file() {
     echo "Files not found."
     exit 1
   fi
-  echo "Select a file (or type 'Quit' to exit):"
+  echo "Select a file (or choose 'Quit' to exit):"
   select file in "${files[@]}" "Quit"; do
     if [[ "$file" == "Quit" ]]; then
       echo "Exiting..."
@@ -111,8 +111,6 @@ is_schedule_file() {
 }
 
 main() {
-  script_dir="$(cd "$(dirname "$0")" && pwd)"
-
   if [[ -n "$2" ]]; then
     selected_file="$2"
     [[ "$selected_file" != /* ]] && selected_file="$script_dir/$selected_file"
