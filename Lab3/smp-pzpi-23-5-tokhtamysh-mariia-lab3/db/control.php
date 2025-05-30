@@ -98,14 +98,13 @@ function eco_get_cart_contents()
 
 function eco_add_product_to_cart($product_id, $quantity)
 {
-    // Проверка входных данных: количество должно быть от 1 до 100
     $quantity = (int)$quantity;
     if ($quantity < 1) {
-        // Можно выбросить исключение или просто выйти
-        return; // Игнорируем запрос с некорректным количеством
+
+        return;
     }
     if ($quantity > 100) {
-        $quantity = 100; // Ограничиваем максимальное количество за один раз
+        $quantity = 100; 
     }
 
     $db = eco_get_database();
@@ -124,7 +123,7 @@ function eco_add_product_to_cart($product_id, $quantity)
     if ($existing_item) {
         $new_quantity = $existing_item['quantity'] + $quantity;
         if ($new_quantity > 100) {
-            $new_quantity = 100; // Ограничиваем максимум 100 в корзине
+            $new_quantity = 100;
         }
 
         $query = $db->prepare('
@@ -136,7 +135,7 @@ function eco_add_product_to_cart($product_id, $quantity)
         $query->bindValue(':id', $existing_item['id'], SQLITE3_INTEGER);
         $query->execute();
     } else {
-        // Просто добавляем новый товар с количеством, ограниченным максимумом 100 (уже проверено выше)
+       
         $query = $db->prepare('
             INSERT INTO cart_items (session_id, product_id, quantity)
             VALUES (:session_id, :product_id, :quantity)
