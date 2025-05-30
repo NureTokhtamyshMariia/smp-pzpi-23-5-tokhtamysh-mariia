@@ -7,9 +7,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $quantity = (int)$_POST['quantity'];
 
         if ($quantity > 0) {
-            eco_add_product_to_cart($item_id, $quantity);  // <-- fix here
+            eco_add_product_to_cart($item_id, $quantity);  
 
-            $items = eco_get_all_products();  // <-- fix here
+            $items = eco_get_all_products(); 
             foreach ($items as $item) {
                 if ($item['id'] === $item_id) {
                     $_SESSION['flash_messages'][] = "Item '{$item['name']}' added to cart!";
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-$items = eco_get_all_products();  // <-- fix here
+$items = eco_get_all_products();  
 ;
 ?>
 
