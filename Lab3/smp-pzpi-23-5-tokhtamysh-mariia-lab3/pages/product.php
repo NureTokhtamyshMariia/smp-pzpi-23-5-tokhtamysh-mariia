@@ -87,7 +87,7 @@ $items = eco_get_all_products();
     <?php endforeach; ?>
   </div>
   <div class="products__actions">
-    <a href="cart.php" class="btn btn--primary">Go to Cart</a>
+    <a href="basket.php" class="btn btn--primary">Go to Cart</a>
   </div>
 </main>
 
