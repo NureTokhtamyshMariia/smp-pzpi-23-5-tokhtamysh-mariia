@@ -1,1 +1,131 @@
+body {
+  margin: 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 18px;
+  background-color: #fffffb;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  background-color: #dde5b6;
+  width: 100%;
+  padding-top: 1em;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: #333; /* Было: black */
+  text-decoration: none;
+  font-size: 18px;
+  gap: 8px;
+  font-weight: 700;
+}
+
+
+.nav-item i {
+  font-size: 24px;
+  margin-bottom: 0;
+}
+
+.separator {
+  width: 3px;
+  height: 25px;
+  background-color: black;
+}
+
+
+.home-page {
+  text-align: center;
+  padding: 2px 20px;
+  background-color: #f0f5e4;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-page h1 {
+  font-size: 36px;
+  color: #344e41;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.home-page p {
+  font-size: 20px;
+  margin-bottom: 30px;
+  color: #555;
+}
+
+.home-highlights {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.highlight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 16px;
+  color: #333;
+  max-width: 150px;
+  text-align: center;
+}
+
+.highlight i {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #588157;
+}
+
+.home-page__buttons .btn {
+  display: inline-block;
+  background-color: #a3b18a;
+  color: white;
+  padding: 12px 24px;
+  font-size: 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.home-page__buttons .btn:hover {
+  background-color: #6b8e23;
+}
+
+/* ===== Footer Styles ===== */
+
+.footer {
+  background-color: #dde5b6;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 16px;
+  border-top: 2px solid #a3b18a;
+}
+
+.footer__nav {
+  margin: 10px 0;
+}
+
+.footer__link {
+  color: #344e41;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: 600;
+}
+
+.footer__link:hover {
+  text-decoration: underline;
+}
 
