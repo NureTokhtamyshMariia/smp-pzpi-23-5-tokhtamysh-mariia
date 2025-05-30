@@ -53,7 +53,7 @@ $items = eco_get_all_products();
   <div class="separator"></div>
   <a href="#" class="nav-item">
     <i class="fa-solid fa-rectangle-list"></i>
-    <span>Items</span>
+    <span>Products</span>
   </a>
   <div class="separator"></div>
   <a href="basket.php" class="nav-item">
