@@ -1,0 +1,118 @@
+.eco-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  color: #2f3e2f;
+  margin-top: 5em;
+  margin-bottom: 5em;
+}
+
+.eco-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #3a5a40; /* темно-зелений, чіткий */
+}
+
+.eco-success-box,
+.eco-empty-box {
+  background-color: #e6f4d9; /* ніжно-зелений */
+  padding: 1.5rem;
+  border: 2px solid #bcd9a7; /* світла рамка */
+  border-radius: 12px;
+  text-align: center;
+  color: #355e3b;
+}
+.eco-btn {
+  background-color: #a3b18a;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 1rem;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+body {
+  background-color: #f0f5e4;
+}
+
+
+.eco-btn:hover {
+  background-color: #6b8e23;
+}
+
+
+.eco-btn,
+.eco-btn-small {
+  background-color: #a3b18a; /* збіг з navbar */
+  color: white;
+  padding: 0.6rem 1.2rem;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.eco-btn:hover,
+.eco-btn-small:hover {
+  background-color: #6b8e23; /* оливково-зелений */
+}
+
+.eco-btn-primary {
+  background-color: #588157; /* темно-зелений */
+}
+
+.eco-btn-primary:hover {
+  background-color: #3a5a40; /* ще темніший при наведенні */
+}
+
+.cart-table {
+  border: 1px solid #c9dcb3;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.cart-table__header,
+.cart-table__footer {
+  background-color: #dde5b6; /* світло-зелений, як у navbar */
+  font-weight: bold;
+  display: flex;
+  color: #2e443a;
+}
+
+.cart-table__row,
+.cart-table__header,
+.cart-table__footer {
+  display: flex;
+}
+
+.cart-table__cell {
+  flex: 1;
+  padding: 0.75rem;
+  border-bottom: 1px solid #d0e2ba;
+  text-align: center;
+}
+
+.eco-row-even {
+  background-color: #f4f8ee;
+}
+
+.eco-row-odd {
+  background-color: #ffffff;
+}
+
+.eco-action-buttons {
+  display: flex;
+  justify-content: flex-end; /* выравниваем все элементы по правому краю */
+  gap: 1rem; /* расстояние между кнопками */
+  margin-top: 1rem;
+}
