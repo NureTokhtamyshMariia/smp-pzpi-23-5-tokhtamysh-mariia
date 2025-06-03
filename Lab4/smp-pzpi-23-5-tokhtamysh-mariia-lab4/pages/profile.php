@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="profile-left">
       <div class="profile-picture-container">
         <?php if (!empty($userProfile['profile_picture'])): ?>
-          <img src="/smp-pzpi-23-5-tokhtamysh-mariia-lab4/uploads/<?php echo htmlspecialchars($userProfile['profile_picture']); ?>?t=<?php echo time(); ?>" alt="Profile Picture" class="profile-picture">
+          <img src="/uploads/<?php echo htmlspecialchars($userProfile['profile_picture']); ?>">
         <?php endif; ?>
       </div>
 
