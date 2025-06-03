@@ -77,14 +77,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'profile_picture' => $userProfile['profile_picture'] ?? ''
         ];
 
-        if (isset($_FILES['profile_picture'])) {
+        if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] !== UPLOAD_ERR_NO_FILE) {
             $uploadResult = processProfileImageUpload($_FILES['profile_picture'], $uploadDirectory, $firstName, $lastName);
             if (!empty($uploadResult['error'])) {
                 $errorMessage = $uploadResult['error'];
             } else {
                 $newUserProfile['profile_picture'] = $uploadResult['filename'];
             }
-        } elseif (empty($userProfile['profile_picture'])) {
+        }
+
+        if (empty($newUserProfile['profile_picture'])) {
             $errorMessage = "You must upload a profile picture";
         }
 
