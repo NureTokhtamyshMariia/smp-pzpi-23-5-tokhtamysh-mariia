@@ -108,7 +108,7 @@ $cartTotalAmount = eco_calculate_cart_total();
     <?php else: ?>
         <div class="cart-page__empty eco-empty-box">
             <p>Your cart is empty 🧺</p>
-            <a href="product.php" class="eco-btn">Go to Products</a>
+            <a href="main.php?product.php" class="eco-btn">Go to Products</a>
         </div>
     <?php endif; ?>
 </main>
