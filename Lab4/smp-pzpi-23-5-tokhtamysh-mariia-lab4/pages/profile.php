@@ -1,19 +1,17 @@
 <?php
 
-
 if (!isset($_SESSION['username'])) {
     header('Location: /pages/login.php');
     exit;
 }
 
-// Гарантируем, что $profile доступен
 $profile = [];
 $profile_file = __DIR__ . '/../db/profile.php';
 if (file_exists($profile_file)) {
     include $profile_file;
 }
 
-$upload_dir = __DIR__ . '/../uploads/'; // строго "uploads" в нижнем регистре
+$upload_dir = __DIR__ . '/../uploads/';
 $error = '';
 $success = '';
 
@@ -24,13 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bio = trim($_POST['bio']);
 
     if (empty($first_name) || empty($last_name) || empty($birth_date) || empty($bio)) {
-        $error = "Усі текстові поля обов'язкові";
+        $error = "All text fields are required";
     } elseif (strlen($first_name) <= 1 || strlen($last_name) <= 1) {
-        $error = "Ім'я та прізвище мають бути довшими за 1 символ";
+        $error = "First and last name must be longer than 1 character";
     } elseif (strtotime($birth_date) > strtotime('-16 years')) {
-        $error = "Користувачу має бути не менше 16 років";
+        $error = "The user must be at least 16 years old";
     } elseif (strlen($bio) < 50) {
-        $error = "Стисла інформація має містити не менше 50 символів";
+        $error = "Bio must be at least 50 characters long";
     } else {
         $new_profile = [
             'first_name' => $first_name,
@@ -40,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'profile_picture' => $profile['profile_picture'] ?? ''
         ];
 
-        // Завантаження фото
         if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] !== UPLOAD_ERR_NO_FILE) {
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0755, true);
@@ -50,40 +47,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
 
             if (!in_array($file['type'], $allowed_types)) {
-                $error = "Непідтримуваний тип файлу";
+                $error = "Unsupported file type";
             } elseif ($file['error'] !== UPLOAD_ERR_OK) {
-                $error = "Помилка при завантаженні файлу: код помилки " . $file['error'];
+                $error = "File upload error: error code " . $file['error'];
             } else {
                 $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $filename = uniqid('img_', true) . '.' . $ext;
                 $destination = $upload_dir . $filename;
 
                 if (!move_uploaded_file($file['tmp_name'], $destination)) {
-                    $error = "Помилка при збереженні файлу";
+                    $error = "Error saving the file";
                 } else {
                     $new_profile['profile_picture'] = $filename;
                 }
             }
         } elseif (empty($profile['profile_picture'])) {
-            $error = "Необхідно завантажити фотографію";
+            $error = "You must upload a photo";
         }
 
-        // Збереження профілю
         if (!$error) {
             $_SESSION['profile'] = $new_profile;
             $profile_data = "<?php\n\$profile = " . var_export($new_profile, true) . ";\n?>";
 
             if (file_put_contents($profile_file, $profile_data) === false) {
-                $error = "Помилка при збереженні даних";
+                $error = "Error saving data";
             } else {
-                $success = "Дані успішно збережено!";
+                $success = "Data saved successfully!";
                 $profile = $new_profile;
             }
         }
     }
 }
 ?>
-
 
 <main class="profile-page">
   <h1>👤Your Profile</h1>
